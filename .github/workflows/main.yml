@@ -23,7 +23,7 @@ jobs:
           git config user.email "github-actions@github.com"
           git add helium
           git commit -m "Build: compiled helium binary"
-          git push https://x-access-token:${{ secrets.GH_ACTIONS_TOKEN }}@github.com/Dum398/helium.git
+          git push
         if: github.event_name == 'push'
 
       - name: Upload artifact
