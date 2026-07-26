@@ -14,9 +14,10 @@ A (very unsafe) compiler written in C with very bad syntax
 
 ## Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- variables
+- writing to stdio
+- reading from stdio
+- functions
 
 ### Tech Stack
 
@@ -33,10 +34,9 @@ gcc ./src/main.c -o helium
 ## Usage
 
 ```bash
-npm start
+./helium <your helium file>
 ```
-
-Describe how to use the project here.
+with that you compile your helium file
 
 ## Contributing
 
