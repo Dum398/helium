@@ -1,7 +1,7 @@
 # Helium
 
 A (very unsafe) compiler written in C with very bad syntax
-
+This project is WIP so its very broken
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
 
 ## Table of Contents
