@@ -74,11 +74,12 @@ Token next_token(FILE *file) {
     if (isalpha(kapsa[pos])) {
         char word[64];
         int i = 0;
-        while (pos < len && isalpha(kapsa[pos]) && i < 63) {
+        while (pos < len && !isspace(kapsa[pos]) && kapsa[pos] != ';' && kapsa[pos] != '=' && i < 63) {
             word[i++] = kapsa[pos++];
         }
+   
         word[i] = '\0';
-        if (strcmp(word, "return") == 0) {
+        if (strcmp(word, "exit") == 0) {
             token.type = Exit;
         } else if (strcmp(word, "fn") == 0) {
             token.type = funkce;

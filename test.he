@@ -1,8 +1,8 @@
 fn main;
-call pes;
-
-fn pes;
-def testovacistring = str ahoj;
-def testovaciinteger = int 32;
-vyblej testovacistring;
-return testovaciinteger;
+def greeting = str Hi, ;
+def ask = str Enter your name: ;
+vyblej ask;
+input inbuf;
+vyblej greeting;
+vyblej inbuf;
+exit 0;
