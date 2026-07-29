@@ -14,8 +14,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build with GCC
-        run: gcc ./src/main.c -o helium
+      - name: Build with Make
+        run: make clean && make
 
       - name: Commit and push artifact
         run: |
