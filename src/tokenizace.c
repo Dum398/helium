@@ -16,7 +16,8 @@ typedef enum {
     rovnitko,
     t_int,
     t_str,
-    vyblej
+    vyblej,
+    input
 } TokenType;
 
 typedef struct {
@@ -30,9 +31,9 @@ Token next_token(FILE *file) {
     static char kapsa[8192];
     static int pos = 0;
     static int len = 0;
-    
+
     Token token = {blank, 0};
-    
+
     // Skip whitespace
     while (1) {
         if (pos >= len) {
@@ -82,7 +83,7 @@ Token next_token(FILE *file) {
         } else if (strcmp(word, "fn") == 0) {
             token.type = funkce;
         } else if (strcmp(word, "call") == 0) {
-            token.type = zavolat; 
+            token.type = zavolat;
         } else if (strcmp(word, "def") == 0) {
             token.type = definuj;
         } else if (strcmp(word, "int") == 0) {
@@ -91,10 +92,12 @@ Token next_token(FILE *file) {
             token.type = vyblej;
         } else if (strcmp(word, "str") == 0) {
             token.type = t_str;
+        } else if (strcmp(word, "input") == 0) {
+            token.type = input;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
-        } 
+        }
         return token;
     }
     token.type = T_EOF;
