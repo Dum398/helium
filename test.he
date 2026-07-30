@@ -1,10 +1,11 @@
 fn main;
 def ask1 = str Enter your name: ;
 def hello = str Hello ;
-vyblej ask1;
+print ask1;
 input name;
-vyblej hello;
-vyblej name;
-def exitcode = int -56;
+print hello;
+print name;
+def exitcode = int -1;
 neg exitcode;
+dec exitcode;
 exit exitcode;

@@ -69,8 +69,10 @@ int main(int argc, char* argv[]) {
                 fprintf(bssec, "    %s: resb 256\n", t2.strvalue);
             } else if (t1.type == neg && t2.type == string && t3.type == strednik) {
                 fprintf(textsec, "    neg byte [%s]\n", t2.strvalue);
-            } else if (t1.type == toitoi && t2.type == string && t3.type == strednik) {
-                fprintf(textsec, "    mov rdi, %s\n    call atoi\n    %s equ rax\n", t2.strvalue, t2.strvalue);
+            } else if (t1.type == inc && t2.type == string && t3.type == strednik) {
+                fprintf(textsec, "    inc byte [%s]\n", t2.strvalue);
+            } else if (t1.type == dec && t2.type == string && t3.type == strednik) {
+                fprintf(textsec, "    dec byte [%s]\n", t2.strvalue);
             }
 
         }
@@ -119,7 +121,7 @@ int main(int argc, char* argv[]) {
         fclose(bsseco);
         system("nasm -f elf64 out.asm");
         system("ld out.o -o out");
-        //system("rm out.o && rm textsec.textsec && rm bssec.bssec && rm out.asm && rm datasec.datasec");
+        system("rm out.o && rm textsec.textsec && rm bssec.bssec && rm out.asm && rm datasec.datasec");
         fclose(file);
         return 0;
     }

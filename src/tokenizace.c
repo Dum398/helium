@@ -19,7 +19,8 @@ typedef enum {
     vyblej,
     input,
     neg,
-    toitoi
+    dec,
+    inc
 } TokenType;
 
 typedef struct {
@@ -96,7 +97,7 @@ Token next_token(FILE *file) {
             token.type = definuj;
         } else if (strcmp(word, "int") == 0) {
             token.type = t_int;
-        } else if (strcmp(word, "vyblej") == 0){
+        } else if (strcmp(word, "print") == 0){
             token.type = vyblej;
         } else if (strcmp(word, "str") == 0) {
             token.type = t_str;
@@ -104,9 +105,11 @@ Token next_token(FILE *file) {
             token.type = input;
         } else if (strcmp(word, "neg") == 0) {
             token.type = neg; 
-        } else if (strcmp(word, "atoi") == 0) {
-            token.type = toitoi;
-        }else {
+        }else if (strcmp(word, "inc") == 0) {
+            token.type = inc;
+        } else if (strcmp(word, "dec") == 0) {
+            token.type = dec;
+        } else {
             token.type = string;
             strcpy(token.strvalue, word);
         }
