@@ -17,7 +17,9 @@ typedef enum {
     t_int,
     t_str,
     vyblej,
-    input
+    input,
+    neg,
+    toitoi
 } TokenType;
 
 typedef struct {
@@ -33,8 +35,6 @@ Token next_token(FILE *file) {
     static int len = 0;
 
     Token token = {blank, 0};
-
-    // Skip whitespace
     while (1) {
         if (pos >= len) {
             len = fread(kapsa, 1, sizeof(kapsa), file);
@@ -61,12 +61,19 @@ Token next_token(FILE *file) {
         token.type = rovnitko;
         return token;
     }
-
+    int negative = 0;
+    if (kapsa[pos] == '-') {
+        negative = 1;
+        pos++;
+    }
     if (isdigit(kapsa[pos])) {
         token.type = Intydzr;
         while (pos < len && isdigit(kapsa[pos])) {
             token.value = token.value * 10 + (kapsa[pos] - '0');
             pos++;
+        }
+        if (negative) {
+            token.value = -token.value;
         }
         return token;
     }
@@ -95,7 +102,11 @@ Token next_token(FILE *file) {
             token.type = t_str;
         } else if (strcmp(word, "input") == 0) {
             token.type = input;
-        } else {
+        } else if (strcmp(word, "neg") == 0) {
+            token.type = neg; 
+        } else if (strcmp(word, "atoi") == 0) {
+            token.type = toitoi;
+        }else {
             token.type = string;
             strcpy(token.strvalue, word);
         }

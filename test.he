@@ -1,8 +1,10 @@
 fn main;
-def greeting = str Hi, ;
-def ask = str Enter your name: ;
-vyblej ask;
-input inbuf;
-vyblej greeting;
-vyblej inbuf;
-exit 0;
+def ask1 = str Enter your name: ;
+def hello = str Hello ;
+vyblej ask1;
+input name;
+vyblej hello;
+vyblej name;
+def exitcode = int -56;
+neg exitcode;
+exit exitcode;

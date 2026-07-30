@@ -54,18 +54,23 @@ int main(int argc, char* argv[]) {
                 Token t5 = next_token(file);
                 Token t6 = next_token(file);
                 if (t4.type == t_int && t5.type == Intydzr && t6.type == strednik) {
-                    fprintf(textsec, "    %s equ %i\n", t2.strvalue, t5.value);
+                    fprintf(bssec, "%s resb 1\n", t2.strvalue);
+                    fprintf(textsec, "    mov byte [%s], %i\n", t2.strvalue, t5.value);
                 } else if (t4.type == t_str && t5.type == string && t6.type == strednik){
                     fprintf(datasec, "    %s db '%s'\n", t2.strvalue, t5.strvalue);
                     fprintf(datasec, "    %slen equ $-%s\n", t2.strvalue, t2.strvalue);
                 }
             } else if (t1.type == Exit && t2.type == string && t3.type == strednik) {
-                fprintf(textsec, "    mov rax, 60\n    mov rdi, %s\n    syscall\n", t2.strvalue);
+                fprintf(textsec, "    mov rax, 60\n    mov rdi, [%s]\n    syscall\n", t2.strvalue);
             } else if (t1.type == vyblej && t2.type == string && t3.type == strednik) {
                 fprintf(textsec, "    mov rax, 1\n    mov rdi, 1\n    mov rsi, %s\n    mov rdx, %slen\n    syscall\n", t2.strvalue, t2.strvalue);
             } else if (t1.type == input && t2.type == string && t3.type == strednik) {
                 fprintf(textsec, "    mov rax, 0\n    mov rdi, 0\n    mov rsi, %s\n    mov rdx, 256\n    syscall\n    %slen equ 256\n", t2.strvalue, t2.strvalue);
-                fprintf(bssec, "    %s resb 256\n", t2.strvalue);
+                fprintf(bssec, "    %s: resb 256\n", t2.strvalue);
+            } else if (t1.type == neg && t2.type == string && t3.type == strednik) {
+                fprintf(textsec, "    neg byte [%s]\n", t2.strvalue);
+            } else if (t1.type == toitoi && t2.type == string && t3.type == strednik) {
+                fprintf(textsec, "    mov rdi, %s\n    call atoi\n    %s equ rax\n", t2.strvalue, t2.strvalue);
             }
 
         }
@@ -114,7 +119,7 @@ int main(int argc, char* argv[]) {
         fclose(bsseco);
         system("nasm -f elf64 out.asm");
         system("ld out.o -o out");
-        system("rm out.o && rm textsec.textsec && rm bssec.bssec && rm out.asm && rm datasec.datasec");
+        //system("rm out.o && rm textsec.textsec && rm bssec.bssec && rm out.asm && rm datasec.datasec");
         fclose(file);
         return 0;
     }

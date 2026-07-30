@@ -6,3 +6,7 @@ all: ./build/helium
 
 clean:
 	rm -f ./build/helium
+	rm -f datasec.datasec
+	rm -f bssec.bssec
+	rm -f textsec.textsec
+	rm -f out.asm
