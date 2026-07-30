@@ -18,6 +18,7 @@ This project is WIP so its very broken
 - writing to stdio
 - reading from stdio
 - functions
+- negating an integer
 
 ### Tech Stack
 
