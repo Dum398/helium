@@ -73,8 +73,24 @@ int main(int argc, char* argv[]) {
                 fprintf(textsec, "    inc byte [%s]\n", t2.strvalue);
             } else if (t1.type == dec && t2.type == string && t3.type == strednik) {
                 fprintf(textsec, "    dec byte [%s]\n", t2.strvalue);
+            } else if (t1.type == sub && t2.type == string || t2.type == Intydzr && t3.type == string || t3.type == Intydzr) {
+                Token t4 = next_token(file);
+                if (t4.type == strednik) {
+                    if (t2.type == string) {
+                        if (t3.type == string) {
+                            fprintf(textsec, "    sub [%s], [%s]\n", t2.strvalue, t3.strvalue);
+                        } else if (t3.type == Intydzr) {
+                            fprintf(textsec, "    sub [%s], %i\n", t2.strvalue, t3.value);
+                        }
+                    } else if (t2.type == Intydzr) {
+                        if (t3.type == string) {
+                            fprintf(textsec, "    sub %i, [%s]\n", t2.value, t3.strvalue);
+                        } else if (t3.type == Intydzr) {
+                            fprintf(textsec, "    sub %i, %i\n", t2.value, t2.value);
+                        }
+                    }
+                }
             }
-
         }
         fclose(textsec);
         fclose(datasec);

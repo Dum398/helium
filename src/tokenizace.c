@@ -20,7 +20,8 @@ typedef enum {
     input,
     neg,
     dec,
-    inc
+    inc,
+    sub
 } TokenType;
 
 typedef struct {
@@ -109,6 +110,8 @@ Token next_token(FILE *file) {
             token.type = inc;
         } else if (strcmp(word, "dec") == 0) {
             token.type = dec;
+        } else if (strcmp(word, "sub") == 0) {
+            token.type = sub;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
