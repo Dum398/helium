@@ -20,22 +20,22 @@ int main(int argc, char* argv[]) {
         puts("Incorrect usage, Usage: helium <file> [-d]");
     } else {
         if (argc == 4) {
-            if (strcmp(argv[2], "-o") == 0 || strcmp(argv[3], "-o")) {
+            if ((strcmp(argv[2], "-o") == 0) || (strcmp(argv[3], "-o") == 0)) {
                 if (strcmp(argv[2], "-o") == 0) {
                     filename = argv[3];
                 } else if (strcmp(argv[3], "-o")) {
                     filename = argv[4];
                 }
             }
-            if (strcmp(argv[2], "-d") == 0 || strcmp(argv[2], "--debug") == 0 || strcmp(argv[3], "-d") == 0 || strcmp(argv[3], "--debug")) {
+            if ((strcmp(argv[2], "-d") == 0) || (strcmp(argv[2], "--debug") == 0) || (strcmp(argv[3], "-d") == 0) || (strcmp(argv[3], "--debug") == 0)) {
                 debugstate = 1;
-            } else if (strcmp(argv[2], "-h") == 0 || strcmp(argv[2], "--help") == 0 || strcmp(argv[3], "-h") == 0 || strcmp(argv[3], "--help")) {
+            } else if ((strcmp(argv[2], "-h") == 0) || (strcmp(argv[2], "--help") == 0) || (strcmp(argv[3], "-h") == 0) || (strcmp(argv[3], "--help") == 0)) {
                 displayhelp(1);
             }
         } else if (argc == 3) {
-            if (strcmp(argv[2], "-d") == 0 || strcmp(argv[2], "--debug") == 0) {
+            if ((strcmp(argv[2], "-d") == 0) || (strcmp(argv[2], "--debug") == 0)) {
                 debugstate = 1;
-            } else if (strcmp(argv[2], "-h") == 0 || strcmp(argv[2], "--help") == 0) {
+            } else if ((strcmp(argv[2], "-h") == 0) || (strcmp(argv[2], "--help") == 0)) {
                 displayhelp(1);
             }
         } else if (argc == 2) {
