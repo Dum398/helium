@@ -35,7 +35,7 @@ make clean && make
 ## Usage
 
 ```bash
-./helium <your helium file>
+./helium <your source file>
 ```
 with that you compile your helium file
 
