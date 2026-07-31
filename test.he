@@ -9,4 +9,5 @@ def exitcode = int -20;
 neg exitcode;
 dec exitcode;
 sub exitcode 19;
+add exitcode 1;
 exit exitcode;

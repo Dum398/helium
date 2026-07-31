@@ -10,3 +10,4 @@ clean:
 	rm -f bssec.bssec
 	rm -f textsec.textsec
 	rm -f out.asm
+	rm -f out
