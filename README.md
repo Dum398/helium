@@ -29,7 +29,7 @@ This project is WIP so its very broken
 ```bash
 git clone https://github.com/Dum398/helium.git
 cd helium
-gcc ./src/main.c -o helium
+make clean && make
 ```
 
 ## Usage
