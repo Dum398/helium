@@ -4,11 +4,48 @@
 #include <string.h>
 #include "tokenizace.c"
 
+void displayhelp(int shouldexit) {
+    puts("Usage: helium <file> [-d -h]\n    Flags: -h        Displays this help page\n           -d       Enables debug mode(wont delete assembly file)\n           --debug       Enables debug mode(wont delete assembly file)\n           --help     Displays this help page");
+    if (shouldexit == 1) {
+        exit(0);
+    } else {
+        return;
+    }
+}
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        puts("Incorrect usage, Usage: helium <file>\n");
+    int debugstate = 0;
+    char *filename = "out";
+    if (!(argc == 2 || argc == 3 || argc == 4)) {
+        puts("Incorrect usage, Usage: helium <file> [-d]");
     } else {
+        if (argc == 4) {
+            if (strcmp(argv[2], "-o") == 0 || strcmp(argv[3], "-o")) {
+                if (strcmp(argv[2], "-o") == 0) {
+                    filename = argv[3];
+                } else if (strcmp(argv[3], "-o")) {
+                    filename = argv[4];
+                }
+            }
+            if (strcmp(argv[2], "-d") == 0 || strcmp(argv[2], "--debug") == 0 || strcmp(argv[3], "-d") == 0 || strcmp(argv[3], "--debug")) {
+                debugstate = 1;
+            } else if (strcmp(argv[2], "-h") == 0 || strcmp(argv[2], "--help") == 0 || strcmp(argv[3], "-h") == 0 || strcmp(argv[3], "--help")) {
+                displayhelp(1);
+            }
+        } else if (argc == 3) {
+            if (strcmp(argv[2], "-d") == 0 || strcmp(argv[2], "--debug") == 0) {
+                debugstate = 1;
+            } else if (strcmp(argv[2], "-h") == 0 || strcmp(argv[2], "--help") == 0) {
+                displayhelp(1);
+            }
+        } else if (argc == 2) {
+            if (strcmp(argv[1], "-h") == 0) {
+                displayhelp(1);
+            } else if (strcmp(argv[1], "--help") == 0) {
+                displayhelp(1);
+            }
+        }
+   
         FILE *file = fopen(argv[1], "r");
         if (file == NULL) {
             perror("Error opening file\n");
@@ -178,9 +215,13 @@ int main(int argc, char* argv[]) {
         fclose(textseco);
         fclose(bsseco);
         system("nasm -f elf64 out.asm");
-        system("ld out.o -o out");
+        char* ldcommand;
+        asprintf(&ldcommand, "ld out.o -o %s", filename);
+        system(ldcommand);
         system("rm out.o && rm textsec.textsec && rm bssec.bssec && rm datasec.datasec");
-        //system("rm out.asm");
+        if (debugstate != 1) {
+            system("rm out.asm");
+        } 
         fclose(file);
         return 0;
     }
