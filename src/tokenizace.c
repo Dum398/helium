@@ -16,6 +16,7 @@ typedef enum {
     rovnitko,
     t_int,
     t_str,
+    t_time,
     vyblej,
     input,
     neg,
@@ -23,7 +24,8 @@ typedef enum {
     inc,
     sub,
     add,
-    alloc
+    alloc,
+    spat
 } TokenType;
 
 typedef struct {
@@ -118,6 +120,10 @@ Token next_token(FILE *file) {
             token.type = add;
         } else if (strcmp(word, "alloc") == 0) {
             token.type = alloc;
+        } else if (strcmp(word, "sleep") == 0) {
+            token.type = spat;
+        } else if (strcmp(word, "time") == 0) {
+            token.type = t_time;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);

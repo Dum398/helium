@@ -1,6 +1,7 @@
 fn main;
 def ask1 = str Enter your name: ;
 def hello = str Hello ;
+def sleeptime = time 3;
 print ask1;
 input name;
 print hello;
@@ -10,4 +11,5 @@ neg exitcode;
 dec exitcode;
 sub exitcode 19;
 add exitcode 1;
+sleep sleeptime;
 exit exitcode;
