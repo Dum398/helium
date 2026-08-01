@@ -1,0 +1,13 @@
+fn main;
+def a = str abcd;
+def b = int 1;
+call loop;
+fn c;
+call loop;
+fn loop;
+isequal b 20 eksit;
+print a;
+inc b;
+call c;
+fn eksit;
+exit 0;

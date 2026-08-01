@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "tokenizace.c"
 int debugstate = 0;
 
@@ -12,11 +13,19 @@ int cleanup() {
     if (debugstate != 1) {
         int excode = system("rm out.asm");
     } 
-    if (excode == 0) {
+    if (excode == 1) {
         return 0;
     } else {
         return 1;
     }
+}
+
+void endonbadsyntax() {
+    perror("Wrong syntax");
+    puts("exiting now...");
+    cleanup();
+    sleep(3);
+    exit(1);
 }
 
 void displayhelp(int shouldexit) {
@@ -29,8 +38,10 @@ void displayhelp(int shouldexit) {
 }
 
 void endonexpectedsemicolon() {
-    puts("Expected ;");
+    perror("Expected ;");
+    puts("Exiting now...");
     cleanup();
+    sleep(3);
     exit(1);
 }
 
@@ -89,7 +100,7 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         fputs("section .bss\n", bssec);
-        fputs("section .data\n", datasec);
+        fputs("default rel\nsection .data\n", datasec);
         for (int i = 0; i < 64; i++) {
             Token t1 = next_token(file);
             Token t2 = next_token(file);
@@ -124,7 +135,7 @@ int main(int argc, char* argv[]) {
                 Token t6 = next_token(file);
                 if (t4.type == t_int && t5.type == Intydzr ) {
                     if (t6.type == strednik) {
-                        fprintf(bssec, "%s resb 1\n", t2.strvalue);
+                        fprintf(bssec, "    %s: resb 1\n", t2.strvalue);
                         fprintf(textsec, "    mov byte [%s], %i\n", t2.strvalue, t5.value);
                     } else {
                         endonexpectedsemicolon();
@@ -145,7 +156,7 @@ int main(int argc, char* argv[]) {
                 }
             } else if (t1.type == Exit && t2.type == string ) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    mov rax, 60\n    mov rdi, [%s]\n    syscall\n", t2.strvalue);
+                    fprintf(textsec, "    mov rax, 60\n    movzx rdi, byte [%s]\n    syscall\n", t2.strvalue);
                 } else {
                     endonexpectedsemicolon();
                 }
@@ -197,8 +208,7 @@ int main(int argc, char* argv[]) {
                         }
                     }
                 } else {
-                    perror("Expected ;");
-                    exit(1);
+                    endonexpectedsemicolon();
                 }
             } else if (t1.type == add && ((t2.type == string  && t3.type == string) || (t2.type == string  && t3.type == Intydzr) || (t2.type == Intydzr && t3.type == string)  || (t2.type == Intydzr && t3.type == Intydzr))) {
                 Token t4 = next_token(file);
@@ -217,10 +227,9 @@ int main(int argc, char* argv[]) {
                         }
                     }
                 } else {
-                    perror("Expected ;");
-                    exit (1);
+                    endonexpectedsemicolon();
                 }
-            } else if (t1.type == alloc && (t2.type == Intydzr && t3.type == Intydzr) || (t2.type == Intydzr && t3.type == string) || (t2.type == string && t3.type == string) || (t2.type == string && t3.type == Intydzr)) {
+            } else if (t1.type == alloc && ((t2.type == Intydzr && t3.type == Intydzr) || (t2.type == Intydzr && t3.type == string) || (t2.type == string && t3.type == string) || (t2.type == string && t3.type == Intydzr))) {
                 Token t4 = next_token(file);
                 if (t4.type == strednik) {
                     if (t2.type == string) {
@@ -237,12 +246,43 @@ int main(int argc, char* argv[]) {
                         }
                     }
                 } else {
-                    perror("Expected ;");
+                    endonexpectedsemicolon();
                 }
             } else if (t1.type == spat && t2.type == string) {
+                if (t3.type == strednik) {
                     fprintf(textsec, "    mov rax, 35\n    lea rdi, [rel %s]\n    mov rsi, 0\n    syscall\n", t2.strvalue);
+                } else {
+                    endonexpectedsemicolon();
+                }
+            } else if (t1.type == isequal && ((t2.type == string || t2.type == Intydzr) && (t3.type == string || t3.type == Intydzr))) {
+                    Token t4 = next_token(file);
+                    Token t5 = next_token(file);
+                    if (t5.type == strednik) {
+                        if (t4.type == string) {
+                            if (t2.type == string) {
+                                if (t3.type == string) {
+                                    fprintf(textsec,"    mov al, byte [%s]\n    cmp al, byte [%s]\n    je %s\n", t2.strvalue, t3.strvalue, t4.strvalue);
+                                } else if (t3.type == Intydzr) {
+                                    fprintf(textsec,"    mov al, byte [%s]\n    cmp al,    %i\n    je %s\n", t2.strvalue, t3.value, t4.strvalue);
+                                }
+                            } else if (t2.type == Intydzr) {
+                                if (t3.type == Intydzr) {
+                                    fprintf(textsec, "    mov al, %i\n    cmp al,	%i\n    je  %s\n", t2.value, t3.value, t4.strvalue);
+                                } else if (t3.type == string) {
+                                    fprintf(textsec, "    mov al, %i\n    cmp al, byte [%s]\n    je  %s\n", t2.value, t3.strvalue, t4.strvalue);
+                                }                                
+                            } else {
+                                endonbadsyntax();
+                            }
+                        } else {
+                            endonbadsyntax();
+                        }
+                    } else {
+                        endonexpectedsemicolon();
+                    }
+                }
             }
-        }
+            
         fclose(textsec);
         fclose(datasec);
         fclose(bssec);

@@ -25,7 +25,8 @@ typedef enum {
     sub,
     add,
     alloc,
-    spat
+    spat,
+    isequal
 } TokenType;
 
 typedef struct {
@@ -87,7 +88,7 @@ Token next_token(FILE *file) {
     if (isalpha(kapsa[pos])) {
         char word[64];
         int i = 0;
-        while (pos < len && !isspace(kapsa[pos]) && kapsa[pos] != ';' && kapsa[pos] != '=' && i < 63) {
+        while (pos < len && !isspace(kapsa[pos]) && kapsa[pos] != ';' && kapsa[pos] != '=' && kapsa[pos] != '/' && i < 63) {
             word[i++] = kapsa[pos++];
         }
    
@@ -124,6 +125,8 @@ Token next_token(FILE *file) {
             token.type = spat;
         } else if (strcmp(word, "time") == 0) {
             token.type = t_time;
+        } else if (strcmp(word, "isequal") == 0) {
+            token.type = isequal;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
