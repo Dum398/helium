@@ -335,6 +335,15 @@ int main(int argc, char* argv[]) {
                     if (t4.type == strednik) {
                         fprintf(textsec,"    mov rax, 1\n    mov rdi, [rel %s]\n    mov rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n", t2.strvalue, t3.strvalue, t3.strvalue);
                     }  else end(0);
+                } else if (t1.type == string && (t2.type == rovnitko && t3.type == string || t2.type == rovnitko && t3.type == Intydzr)) {
+                    Token t4 = next_token(file);
+                    if (t4.type == strednik) {
+                        if (t3.type == string) {
+                            fprintf(textsec, "    mov %s, [rel %s]", t1.strvalue, t3.strvalue);
+                        } else if (t3.type == Intydzr) {
+                            fprintf(textsec, "    mov %s, '%i'", t1.strvalue, t3.value);
+                        }
+                    }
                 }
             }
             
