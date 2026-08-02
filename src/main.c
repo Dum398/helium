@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         fputs("section .bss\n    bytes_read: resq 1\n", bssec);
-        fputs("default rel\nsection .data\n    argc: dq 0\n    argv1: dq 0\n", datasec);
+        fputs("default rel\nsection .data\n    argc: dq 0\n    argv1: dq 0\n    argv2: dq 0\n", datasec);
         for (int i = 0; i < 64; i++) {
             Token t1 = next_token(file);
             Token t2 = next_token(file);
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
             } else if (t1.type == funkce && t2.type == string) {
                 if (t3.type == strednik) {
                     if (strcmp(t2.strvalue, "main") == 0) {
-                        fputs("global _start\n_start:\n    mov rax, [rsp]\n    mov [rel argc], rax\n    mov rax, [rsp+16]\n    mov [argv1], rax\n", textsec);
+                        fputs("global _start\n_start:\n    mov rax, [rsp]\n    mov [rel argc], rax\n    mov rax, [rsp+16]\n    mov [argv1], rax\n    mov rax, [rsp+24]\n    mov [argv2], rax\n", textsec);
                     } else {
                         fprintf(textsec, "%s:\n", t2.strvalue);
                     }
@@ -312,6 +312,29 @@ int main(int argc, char* argv[]) {
                     if (t3.type == strednik) {
                         fprintf(textsec, "    mov rax, 1\n    mov rdi, 1\n    mov rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n", t2.strvalue, t2.strvalue);
                     }
+                }else if (t1.type == movopen && t2.type == string && t3.type == string) {
+                    Token t4 = next_token(file);
+                    Token t5 = next_token(file);
+                    if (t5.type == strednik) {
+                        if (strcmp(t3.strvalue, "read") == 0) {
+                            fprintf(textsec, "    mov rax, 2\n    mov rdi, [rel %s]\n    mov rsi, 0\n    mov rdx, 0\n    syscall\n    mov [rel %s], rax\n", t2.strvalue, t4.strvalue);
+                        } else if (strcmp(t3.strvalue, "write") == 0) {
+                            fprintf(textsec, "    mov rax, 2\n    mov rdi, [rel %s]\n    mov rsi, 1\n    mov rdx, 644\n    syscall\n    mov [rel %s], rax\n", t2.strvalue, t4.strvalue);
+                        } else if (strcmp(t3.strvalue, "readwrite") == 0) {
+                            fprintf(textsec, "    mov rax, 2\n    mov rdi, [rel %s]\n    mov rsi, 2\n    mov rdx, 644\n    syscall\n    mov [rel %s], rax\n", t2.strvalue, t4.strvalue);
+                        } else end(2);
+                    } else end(1);
+                } else if (t1.type == movread && t2.type == string && t3.type == string) {
+                    Token t4 = next_token(file);
+                    Token t5 = next_token(file);
+                    if (t5.type == strednik) {
+                        fprintf(textsec, "    mov rax, 0\n    mov rdi, [rel %s]\n    mov rsi, [rel %s]\n    mov rdx, %i\n    syscall\n", t2.strvalue, t3.strvalue, t4.value);
+                    } else end(0);
+                } else if (t1.type == movfprint && t2.type == string && t3.type == string) {
+                    Token t4 = next_token(file);
+                    if (t4.type == strednik) {
+                        fprintf(textsec,"    mov rax, 1\n    mov rdi, [rel %s]\n    mov rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n", t2.strvalue, t3.strvalue, t3.strvalue);
+                    }  else end(0);
                 }
             }
             

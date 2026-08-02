@@ -1,9 +1,11 @@
 fn main;
-def filename = str /home/jirik/Projects/helium/examples/loop.he;
+isequal argc 2 mejn;
+exit 1;
+fn mejn;
 defb fh = filehandle;
-alloc buf 184;
-def buflen = int 184;
-fopen filename read fh;
-fread fh buf 184;
+alloc buf 11;
+def buflen = int 11;
+movopen argv1 read fh;
+fread fh buf 11;
 print buf;
 exit 0;

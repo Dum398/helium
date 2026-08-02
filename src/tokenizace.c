@@ -36,7 +36,10 @@ typedef enum {
     t_quad,
     defb,
     risequeal,
-    movprint
+    movprint,
+    movopen,
+    movread,
+    movfprint
 } TokenType;
 
 typedef struct {
@@ -156,6 +159,10 @@ Token next_token(FILE *file) {
             token.type = risequeal;
         } else if (strcmp(word, "movprint") == 0) {
             token.type = movprint;
+        } else if (strcmp(word, "movopen") == 0) {
+            token.type = movopen;
+        } else if (strcmp(word, "movfprint") == 0) {
+            token.type = movfprint;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
