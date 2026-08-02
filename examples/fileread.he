@@ -1,0 +1,9 @@
+fn main;
+def filename = str /home/jirka/Projects/helium/examples/loop.he;
+def fh = filehandle a;
+alloc buf 167;
+def buflen = int 167;
+fopen filename read fh;
+fread fh buf 167;
+print buf;
+exit 0;

@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <string.h>
 
+
 typedef enum {
     Exit,
     Intydzr,
@@ -26,7 +27,10 @@ typedef enum {
     add,
     alloc,
     spat,
-    isequal
+    isequal,
+    foupn,
+    frid,
+    t_filehandle
 } TokenType;
 
 typedef struct {
@@ -85,10 +89,11 @@ Token next_token(FILE *file) {
         return token;
     }
 
-    if (isalpha(kapsa[pos])) {
+    if (isalpha(kapsa[pos]) || kapsa[pos] == '/' || kapsa[pos] == '.') {
         char word[64];
         int i = 0;
-        while (pos < len && !isspace(kapsa[pos]) && kapsa[pos] != ';' && kapsa[pos] != '=' && kapsa[pos] != '/' && i < 63) {
+
+        while (pos < len && !isspace(kapsa[pos]) && kapsa[pos] != ';' && kapsa[pos] != '=' && i < 63) {
             word[i++] = kapsa[pos++];
         }
    
@@ -127,6 +132,12 @@ Token next_token(FILE *file) {
             token.type = t_time;
         } else if (strcmp(word, "isequal") == 0) {
             token.type = isequal;
+        } else if (strcmp(word, "fopen") == 0) {
+            token.type = foupn;
+        } else if (strcmp(word, "fread") == 0) {
+            token.type = frid;
+        } else if (strcmp(word, "filehandle") == 0) {
+            token.type = t_filehandle;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
