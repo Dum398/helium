@@ -88,23 +88,23 @@ int main(int argc, char* argv[]) {
         }
         FILE *textsec = fopen("textsec.textsec", "w");
         if (textsec == NULL){
-            perror("failed opening assembly file");
+            perror("failed opening text section file");
             return 1;
         }
         FILE *bssec = fopen("bssec.bssec", "w");
         if (bssec == NULL) {
-            perror("Error opening assembly file");
+            perror("Error opening bss section file");
             return 1;
         }
         fprintf(textsec, "section .text\n");
         printf("Starting token parsing loop...\n");
         FILE *datasec = fopen("datasec.datasec", "w");
         if (datasec == NULL) {
-            perror("Error opening datasecoorary file");
+            perror("Error opening datasection file");
             return 1;
         }
         fputs("section .bss\n    bytes_read: resq 1\n", bssec);
-        fputs("default rel\nsection .data\n", datasec);
+        fputs("default rel\nsection .data\n    argc: dq 0\n    argv1: dq 0\n", datasec);
         for (int i = 0; i < 64; i++) {
             Token t1 = next_token(file);
             Token t2 = next_token(file);
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
             } else if (t1.type == funkce && t2.type == string) {
                 if (t3.type == strednik) {
                     if (strcmp(t2.strvalue, "main") == 0) {
-                        fputs("global _start\n_start:\n", textsec);
+                        fputs("global _start\n_start:\n    mov rax, [rsp]\n    mov [rel argc], rax\n    mov rax, [rsp+16]\n    mov [argv1], rax\n", textsec);
                     } else {
                         fprintf(textsec, "%s:\n", t2.strvalue);
                     }
@@ -295,6 +295,22 @@ int main(int argc, char* argv[]) {
                         if (t5.type == strednik) {
                             fprintf(bssec, "    %s: resq 1\n", t2.strvalue);
                         } else end(0);
+                    }
+                } else if (t1.type == risequeal && ((t2.type == string && t3.type == string) || (t2.type == string && t3.type == Intydzr))) {
+                    Token t4 = next_token(file);
+                    Token t5 = next_token(file);
+                    if (t5.type == strednik) {
+                        if (t4.type == string) {
+                            if (t3.type == string) {
+                                fprintf(textsec, "    cmp %s, %s\n    je %s\n", t2.strvalue, t3.strvalue, t4.strvalue);
+                            } else {
+                                fprintf(textsec, "    cmp %s, %i\n    je %s\n", t2.strvalue, t3.value, t4.strvalue);
+                            }
+                        } else end(1);
+                    }else end(0);
+                } else if (t1.type == movprint && t2.type == string) {
+                    if (t3.type == strednik) {
+                        fprintf(textsec, "    mov rax, 1\n    mov rdi, 1\n    mov rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n", t2.strvalue, t2.strvalue);
                     }
                 }
             }

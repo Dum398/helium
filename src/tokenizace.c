@@ -34,7 +34,9 @@ typedef enum {
     vyblejdosouboru,
     klose,
     t_quad,
-    defb
+    defb,
+    risequeal,
+    movprint
 } TokenType;
 
 typedef struct {
@@ -150,6 +152,10 @@ Token next_token(FILE *file) {
             token.type = t_quad;
         } else if (strcmp(word, "defb") == 0) {
             token.type = defb;
+        } else if (strcmp(word, "isequalr") == 0) {
+            token.type = risequeal;
+        } else if (strcmp(word, "movprint") == 0) {
+            token.type = movprint;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
