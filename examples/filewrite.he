@@ -1,0 +1,17 @@
+fn main;
+defb fh = filehandle;
+def msglen = int 255;
+def filenamelen = int 255;
+def ask = str Enter filename: ;
+def ask1 = str Enter text you want to write: ;
+def asklen = int 20;
+def ask1len = int 40;
+print ask;
+input filename;
+dec filenamelen;
+fopen filename write fh;
+print ask1;
+input msg;
+fprint fh msg;
+fclose fh;
+exit 0;

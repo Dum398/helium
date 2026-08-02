@@ -1,11 +1,16 @@
 fn main;
 def ask1 = str Enter your name: ;
 def hello = str Hello ;
+def namelen = int 255;
+def asklen = int 16;
+def ask1len = int 24;
+def hellolen = int 30;
 def i1 = int 3;
 def i2 = int 3;
 def sleeptime = time 3;
 print ask1;
 input name;
+dec namelen;
 print hello;
 print name;
 isequal i1 i2 den;

@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
             perror("Error opening datasecoorary file");
             return 1;
         }
-        fputs("section .bss\n", bssec);
+        fputs("section .bss\n    bytes_read: resq 1\n", bssec);
         fputs("default rel\nsection .data\n", datasec);
         for (int i = 0; i < 64; i++) {
             Token t1 = next_token(file);
@@ -132,47 +132,42 @@ int main(int argc, char* argv[]) {
                 Token t6 = next_token(file);
                 if (t4.type == t_int && t5.type == Intydzr ) {
                     if (t6.type == strednik) {
-                        fprintf(bssec, "    %s: resb 1\n", t2.strvalue);
-                        fprintf(textsec, "    mov byte [%s], %i\n", t2.strvalue, t5.value);
+                        fprintf(bssec, "    %s: resq 1\n", t2.strvalue);
+                        fprintf(textsec, "    mov qword [%s], %i\n", t2.strvalue, t5.value);
                     } else end(0);
                 } else if (t4.type == t_str && t5.type == string){
                     if (t6.type == strednik) {
-                        fprintf(datasec, "    %s db '%s'\n", t2.strvalue, t5.strvalue);
-                        fprintf(datasec, "    %slen equ $-%s\n", t2.strvalue, t2.strvalue);
+                        fprintf(datasec, "    %s db '%s', 0\n", t2.strvalue, t5.strvalue);
                     } else end(0);
                 } else if (t4.type == t_time && t5.type == Intydzr) {
                     if (t6.type == strednik) {
                         fprintf(datasec, "    %s: dq %i\n        dq 0\n", t2.strvalue, t5.value);
                     } else end(0);
-                } else if (t4.type == t_filehandle) {
-                    if (t6.type == strednik) {
-                        fprintf(bssec, "    %s: resq 1\n", t2.strvalue);
-                    } else end(0);
                 }
             } else if (t1.type == Exit && t2.type == string ) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    mov rax, 60\n    movzx rdi, byte [%s]\n    syscall\n", t2.strvalue);
+                    fprintf(textsec, "    mov rax, 60\n    mov rdi, qword [%s]\n    syscall\n", t2.strvalue);
                 } else end(0);
             } else if (t1.type == vyblej && t2.type == string ) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    mov rax, 1\n    mov rdi, 1\n    mov rsi, %s\n    movzx rdx, byte [%slen]\n    syscall\n", t2.strvalue, t2.strvalue);
+                    fprintf(textsec, "    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n", t2.strvalue, t2.strvalue);
                 } else end(0);
             } else if (t1.type == input && t2.type == string ) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    mov rax, 0\n    mov rdi, 0\n    mov rsi, %s\n    mov rdx, 256\n    syscall\n    %slen equ 256\n", t2.strvalue, t2.strvalue);
+                    fprintf(textsec, "    mov rax, 0\n    mov rdi, 0\n    lea rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n    mov [rel %slen], rax\n", t2.strvalue, t2.strvalue, t2.strvalue);
                     fprintf(bssec, "    %s: resb 256\n", t2.strvalue);
                 } else end(0);
             } else if (t1.type == neg && t2.type == string ) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    neg byte [%s]\n", t2.strvalue);
+                    fprintf(textsec, "    neg qword [%s]\n", t2.strvalue);
                 } else end(0);
             } else if (t1.type == inc && t2.type == string ) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    inc byte [%s]\n", t2.strvalue);
+                    fprintf(textsec, "    inc qword [%s]\n", t2.strvalue);
                 } else end(0);
             } else if (t1.type == dec && t2.type == string) {
                 if (t3.type == strednik) {
-                    fprintf(textsec, "    dec byte [%s]\n", t2.strvalue);
+                    fprintf(textsec, "    dec qword [%s]\n", t2.strvalue);
                 } else end(0);
             } else if (t1.type == sub && ((t2.type == string  && t3.type == string) || (t2.type == string  && t3.type == Intydzr) || (t2.type == Intydzr && t3.type == string)  || (t2.type == Intydzr && t3.type == Intydzr))) {
                 Token t4 = next_token(file);
@@ -236,15 +231,15 @@ int main(int argc, char* argv[]) {
                         if (t4.type == string) {
                             if (t2.type == string) {
                                 if (t3.type == string) {
-                                    fprintf(textsec,"    mov al, byte [%s]\n    cmp al, byte [%s]\n    je %s\n", t2.strvalue, t3.strvalue, t4.strvalue);
+                                    fprintf(textsec,"    mov rax, qword [rel %s]\n    cmp rax, qword [rel %s]\n    je %s\n", t2.strvalue, t3.strvalue, t4.strvalue);
                                 } else if (t3.type == Intydzr) {
-                                    fprintf(textsec,"    mov al, byte [%s]\n    cmp al,    %i\n    je %s\n", t2.strvalue, t3.value, t4.strvalue);
+                                    fprintf(textsec,"    mov rax, qword [rel %s]\n    cmp rax,    %i\n    je %s\n", t2.strvalue, t3.value, t4.strvalue);
                                 }
                             } else if (t2.type == Intydzr) {
                                 if (t3.type == Intydzr) {
-                                    fprintf(textsec, "    mov al, %i\n    cmp al,	%i\n    je  %s\n", t2.value, t3.value, t4.strvalue);
+                                    fprintf(textsec, "    mov rax, %i\n    cmp rax,	%i\n    je  %s\n", t2.value, t3.value, t4.strvalue);
                                 } else if (t3.type == string) {
-                                    fprintf(textsec, "    mov al, %i\n    cmp al, byte [%s]\n    je  %s\n", t2.value, t3.strvalue, t4.strvalue);
+                                    fprintf(textsec, "    mov rax, %i\n    cmp rax, qword [rel %s]\n    je  %s\n", t2.value, t3.strvalue, t4.strvalue);
                                 }                                
                             } else end(1);
                         } else end(1);
@@ -255,19 +250,52 @@ int main(int argc, char* argv[]) {
                     Token t5 = next_token(file);
                     if (t5.type == strednik) {
                         if (strcmp(t3.strvalue, "read") == 0) {
-                            fprintf(textsec, "    mov rax, 2\n    mov rdi, %s\n    mov rsi, 0\n    mov rdx, 0\n    syscall\n    mov [%s], rax\n", t2.strvalue, t4.strvalue);
+                            fprintf(textsec, "    mov rax, 2\n    lea rdi, [rel %s]\n    mov rsi, 0\n    mov rdx, 0\n    syscall\n    mov [rel %s], rax\n", t2.strvalue, t4.strvalue);
                         } else if (strcmp(t3.strvalue, "write") == 0) {
-                            fprintf(textsec, "    mov rax, 2\n    mov rdi, %s\n    mov rsi, 1\n    mov rdx, 644\n    syscall\n    mov [%s], rax\n", t2.strvalue, t4.strvalue);
+                            fprintf(textsec, "    mov rax, 2\n    lea rdi, [rel %s]\n    mov rsi, 1\n    mov rdx, 644\n    syscall\n    mov [rel %s], rax\n", t2.strvalue, t4.strvalue);
                         } else if (strcmp(t3.strvalue, "readwrite") == 0) {
-                            fprintf(textsec, "    mov rax, 2\n    mov rdi, %s\n    mov rsi, 2\n    mov rdx, 644\n    syscall\n    mov [%s], rax\n", t2.strvalue, t4.strvalue);
+                            fprintf(textsec, "    mov rax, 2\n    lea rdi, [rel %s]\n    mov rsi, 2\n    mov rdx, 644\n    syscall\n    mov [rel %s], rax\n", t2.strvalue, t4.strvalue);
                         } else end(2);
                     } else end(1);
                 } else if (t1.type == frid && t2.type == string && t3.type == string) {
                     Token t4 = next_token(file);
                     Token t5 = next_token(file);
                     if (t5.type == strednik) {
-                        fprintf(textsec, "    mov rax, 0\n    mov rdi, [%s]\n    lea rsi, [rel %s]\n    mov rdx, %i\n    syscall\n", t2.strvalue, t3.strvalue, t4.value);
+                        fprintf(textsec, "    mov rax, 0\n    mov rdi, [rel %s]\n    lea rsi, [rel %s]\n    mov rdx, %i\n    syscall\n", t2.strvalue, t3.strvalue, t4.value);
                     } else end(0);
+                } else if (t1.type == vyblejdosouboru && t2.type == string && t3.type == string) {
+                    Token t4 = next_token(file);
+                    if (t4.type == strednik) {
+                        fprintf(textsec,"    mov rax, 1\n    mov rdi, [rel %s]\n    lea rsi, [rel %s]\n    mov rdx, [rel %slen]\n    syscall\n", t2.strvalue, t3.strvalue, t3.strvalue);
+                    }  else end(0);
+                } else if (t1.type == klose && t2.type == string) {
+                    if (t3.type == strednik) {
+                        fprintf(textsec, "    mov rax, 3\n    mov rdi, [rel %s]\n    syscall\n", t2.strvalue);
+                    } else end(0);
+                } else if (t1.type == defb && t2.type == string && t3.type == rovnitko) {
+                    Token t4 = next_token(file);
+                    Token t5 = next_token(file);
+                    if (t4.type == t_int) {
+                        if (t5.type == strednik) {
+                            fprintf(bssec, "    %s: resb 1\n", t2.strvalue);
+                        } else end(0);
+                    } else if (t4.type == t_str){
+                        if (t5.type == strednik) {
+                            fprintf(bssec, "    %s: resq 1\n", t2.strvalue);
+                        } else end(0);
+                    } else if (t4.type == t_time) {
+                        if (t5.type == strednik) {
+                            fprintf(datasec, "    %s: dq\n        dq\n", t2.strvalue);
+                        } else end(0);
+                    } else if (t4.type == t_filehandle) {
+                        if (t5.type == strednik) {
+                            fprintf(bssec, "    %s: resq 1\n", t2.strvalue);
+                        } else end(0);
+                    } else if (t4.type == t_quad) {
+                        if (t5.type == strednik) {
+                            fprintf(bssec, "    %s: resq 1\n", t2.strvalue);
+                        } else end(0);
+                    }
                 }
             }
             

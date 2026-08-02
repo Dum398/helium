@@ -1,5 +1,6 @@
 fn main;
 def a = str abcd;
+def alen = int 4;
 def b = int 1;
 def sleeptime = time 1;
 call loop;

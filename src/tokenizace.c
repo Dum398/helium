@@ -30,7 +30,11 @@ typedef enum {
     isequal,
     foupn,
     frid,
-    t_filehandle
+    t_filehandle,
+    vyblejdosouboru,
+    klose,
+    t_quad,
+    defb
 } TokenType;
 
 typedef struct {
@@ -138,6 +142,14 @@ Token next_token(FILE *file) {
             token.type = frid;
         } else if (strcmp(word, "filehandle") == 0) {
             token.type = t_filehandle;
+        } else if (strcmp(word, "fprint") == 0) {
+            token.type = vyblejdosouboru;
+        } else if (strcmp(word, "fclose") == 0) {
+            token.type = klose;
+        } else if (strcmp(word, "quad") == 0) {
+            token.type = t_quad;
+        } else if (strcmp(word, "defb") == 0) {
+            token.type = defb;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);
