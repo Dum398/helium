@@ -11,3 +11,12 @@ clean:
 	rm -f textsec.textsec
 	rm -f out.asm
 	rm -f out
+
+installdepsarch:
+	sudo pacman -S base-devel nasm
+
+installdepsubuntu:
+	sudo apt install ld nasm gcc
+
+installdepsfedora:
+	sudo dnf install ls nasm gcc
