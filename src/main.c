@@ -1,4 +1,3 @@
-#include <iso646.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -174,9 +173,9 @@ int main(int argc, char* argv[]) {
                 if (t4.type == strednik) {
                     if (t2.type == string) {
                         if (t3.type == string) {
-                            fprintf(textsec, "    sub [%s], [%s]\n", t2.strvalue, t3.strvalue);
+                            fprintf(textsec, "    sub qword [%s], [%s]\n", t2.strvalue, t3.strvalue);
                         } else if (t3.type == Intydzr) {
-                            fprintf(textsec, "    sub [%s], %i\n", t2.strvalue, t3.value);
+                            fprintf(textsec, "    sub qword [%s], %i\n", t2.strvalue, t3.value);
                         }
                     } else if (t2.type == Intydzr) {
                         if (t3.type == string) {
