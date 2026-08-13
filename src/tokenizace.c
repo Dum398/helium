@@ -39,7 +39,8 @@ typedef enum {
     movprint,
     movopen,
     movread,
-    movfprint
+    movfprint,
+    getcpid
 } TokenType;
 
 typedef struct {
@@ -164,6 +165,8 @@ Token next_token(FILE *file) {
             token.type = movopen;
         } else if (strcmp(word, "movfprint") == 0) {
             token.type = movfprint;
+        } else if (strcmp(word, "getcpid") == 0) {
+            token.type = getcpid;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);

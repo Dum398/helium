@@ -298,8 +298,12 @@ int main(int argc, char* argv[]) {
                         } else if (t3.type == Intydzr) {
                             fprintf(textsec, "    mov %s, '%i'", t1.strvalue, t3.value);
                         }
-                    }
-                }
+                    } else end(0);
+                } else if (t1.type == getcpid && t2.type == string) {
+		    if (t3.type == strednik) {
+		        fprintf(textsec, "    mov rax, 39\n    syscall\n    mov [%s], rax\n", t2.strvalue);
+		    } else end(0);
+		}
             }
             
         fclose(textsec);
