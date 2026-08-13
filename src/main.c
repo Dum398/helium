@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "tokenizace.c"
 #include "hcomplib.c"
+#include "tokenizace.c"
 
 int main(int argc, char* argv[]) {
     char *filename = "out";

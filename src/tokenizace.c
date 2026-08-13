@@ -68,8 +68,9 @@ Token next_token(FILE *file) {
             break;
         }
         pos++;
+    } if (debugstate == 1) {
+    	printf("DEBUG: About to check char at pos %d: '%c' (ASCII %d)\n", pos, kapsa[pos], (int)kapsa[pos]);
     }
-    printf("DEBUG: About to check char at pos %d: '%c' (ASCII %d)\n", pos, kapsa[pos], (int)kapsa[pos]);
     if (kapsa[pos] == ';') {
         pos++;
         token.type = strednik;
