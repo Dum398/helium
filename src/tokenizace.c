@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-
+#include <stdio.h>
 
 typedef enum {
     Exit,
@@ -40,7 +39,8 @@ typedef enum {
     movopen,
     movread,
     movfprint,
-    getcpid
+    getcpid,
+    getfsize
 } TokenType;
 
 typedef struct {
@@ -167,6 +167,8 @@ Token next_token(FILE *file) {
             token.type = movfprint;
         } else if (strcmp(word, "getcpid") == 0) {
             token.type = getcpid;
+        } else if (strcmp(word, "getfsize") == 0) {
+            token.type = getfsize;
         } else {
             token.type = string;
             strcpy(token.strvalue, word);

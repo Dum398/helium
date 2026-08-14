@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 int debugstate = 0;
 int cleanup() {
     int excode;
