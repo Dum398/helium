@@ -420,15 +420,13 @@ int main(int argc, char *argv[]) {
                   t2.strvalue, t3.strvalue, t3.strvalue);
         } else
           end(0);
-      } else if (t1.type == string &&
-                 (t2.type == rovnitko && t3.type == string ||
-                  t2.type == rovnitko && t3.type == Intydzr)) {
+      } else if (t1.type == string && (t2.type == rovnitko && t3.type == string || t2.type == rovnitko && t3.type == Intydzr)) {
         Token t4 = next_token(file);
         if (t4.type == strednik) {
           if (t3.type == string) {
-            fprintf(textsec, "    mov %s, [rel %s]", t1.strvalue, t3.strvalue);
+            fprintf(textsec, "    mov rax, [rel %s]\n    mov [rel %s], rax\n", t3.strvalue, t1.strvalue);
           } else if (t3.type == Intydzr) {
-            fprintf(textsec, "    mov %s, '%i'", t1.strvalue, t3.value);
+            fprintf(textsec, "    mov [rel %s], %i\n", t1.strvalue, t3.value);
           }
         } else
           end(0);

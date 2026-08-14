@@ -1,3 +1,5 @@
+OS_ID := $(shell grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+
 all: ./build/helium
 
 ./build/helium: ./src/main.c
@@ -12,11 +14,13 @@ clean:
 	rm -f out.asm
 	rm -f out
 
-installdepsarch:
-	sudo pacman -S base-devel nasm
-
-installdepsubuntu:
-	sudo apt install ld nasm gcc
-
-installdepsfedora:
-	sudo dnf install ls nasm gcc
+deps:
+	@if [ "$(OS_ID)" = "ubuntu" ]; then \
+		sudo apt-get update && sudo apt-get install -y ld nasm gcc build-essential; \
+	elif [ "$(OS_ID)" = "fedora" ]; then \
+		sudo dnf install -y ld nasm gcc make; \
+	elif [ "$(OS_ID)" = "arch" ]; then \
+		sudo pacman -Sy --noconfirm base-devel nasm gcc; \
+	else \
+		echo "Unsupported OS. Please install dependencies manually: nasm, gcc, make"; \
+	fi
