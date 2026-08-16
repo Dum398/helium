@@ -24,3 +24,12 @@ deps:
 	else \
 		echo "Unsupported OS. Please install dependencies manually: nasm, gcc, make"; \
 	fi
+
+install:
+	make clean && make
+	@if [ -z "$(DESTDIR)" ]; then \
+		echo "DESTDIR is not set. Installing to /usr/bin/helium (may require sudo)"; \
+		install -Dm755 ./build/helium /usr/bin/helium; \
+	else \
+		install -Dm755 ./build/helium "$(DESTDIR)/usr/bin/helium"; \
+	fi
